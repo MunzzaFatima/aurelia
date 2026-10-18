@@ -19,7 +19,7 @@ export default async function Home() {
             <p className="mt-6 max-w-md text-charcoal/70">Fashion, jewelry, fragrance and home pieces chosen for how they feel as much as how they look.</p>
             <div className="mt-8 flex flex-wrap gap-4"><Link href="/products" className="btn btn-dark">Shop now</Link><a href="#collections" className="btn btn-line">Explore collections</a></div>
           </div>
-          <img src="/api/img?t=The%20AURELIA%20Edit&c=womens-fashion" alt="AURELIA featured collection" className="aspect-[4/5] w-full object-cover" />
+          <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=800&h=1000&fit=crop&auto=format&q=80" alt="AURELIA featured collection" className="aspect-[4/5] w-full object-cover" />
         </div>
       </section>
 
