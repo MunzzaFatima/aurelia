@@ -5,10 +5,10 @@ export function GET(req: Request) {
 
   const IMAGES: Record<string, string[]> = {
     "womens-fashion": [
-      "https://images.unsplash.com/photo-1595777457583-95e059d581b8", // red gown
-      "https://images.unsplash.com/photo-1490481651871-ab68de25d43d", // black dress
-      "https://images.unsplash.com/photo-1550928431-ee0ec6db30d3", // white dress
-      "https://images.unsplash.com/photo-1485968579580-b6d095142e6e", // casual
+      "https://images.unsplash.com/photo-1595777457583-95e059d581b8",
+      "https://images.unsplash.com/photo-1490481651871-ab68de25d43d",
+      "https://images.unsplash.com/photo-1550928431-ee0ec6db30d3",
+      "https://images.unsplash.com/photo-1485968579580-b6d095142e6e",
       "https://images.unsplash.com/photo-1515372039744-b8f02a3ae442",
       "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f",
       "https://images.unsplash.com/photo-1524504388940-b1c1722653e1",
@@ -50,15 +50,44 @@ export function GET(req: Request) {
       "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace",
       "https://images.unsplash.com/photo-1519710164239-da123dc03ef4",
     ],
+    // FIX: Added separate images for these slugs to prevent duplicate fallback
+    "new-arrivals": [
+      "https://images.unsplash.com/photo-1483985988355-763728e1935b",
+      "https://images.unsplash.com/photo-1469334031218-e382a71b716b",
+      "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f",
+    ],
+    "best-sellers": [
+      "https://images.unsplash.com/photo-1445205170230-053b83016050",
+      "https://images.unsplash.com/photo-1485968579580-b6d095142e6e",
+    ],
+    "sale": [
+      "https://images.unsplash.com/photo-1483985988355-763728e1935b",
+    ],
+    "all": [
+      "https://images.unsplash.com/photo-1445205170230-053b83016050",
+    ]
   };
 
-  const list = IMAGES[c] || IMAGES["womens-fashion"];
+  // FIX 1: Prevent fallback to womens-fashion which causes duplicate images
+  // If slug not found, pick a category deterministically based on slug name
+  let list = IMAGES[c];
+  if (!list) {
+    const keys = Object.keys(IMAGES);
+    // Generate hash from category name to pick a different category
+    let cHash = 0;
+    for(let i=0; i<c.length; i++) cHash += c.charCodeAt(i);
+    list = IMAGES[keys[cHash % keys.length]];
+  }
   
-  // Har product ke naam se alag number banao taake image repeat na ho
-  let hash = t.length * 7;
+  // FIX 2: Include category name in hash to avoid same image for same product title in different categories
+  let hash = t.length * 7 + c.length * 13;
   for (let i = 0; i < t.length; i++) {
     hash += t.charCodeAt(i) * (i + 1);
   }
+  for (let i = 0; i < c.length; i++) {
+    hash += c.charCodeAt(i) * (i + 3);
+  }
+  
   const imgUrl = list[hash % list.length] + "?w=600&h=800&fit=crop&auto=format&q=80";
 
   return Response.redirect(imgUrl, 302);
